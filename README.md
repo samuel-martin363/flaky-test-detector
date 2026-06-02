@@ -30,30 +30,38 @@ It also does the analysis a "rerun it 5 times" script can't:
 
 ## Install
 
+No install needed — run it directly with npx:
+
 ```bash
-npm install        # local
-# or: npm install -g flaky-test-detector
+npx flaky-test-detector "npm test"
+```
+
+Or install it globally to get the `flaky-detector` command:
+
+```bash
+npm install -g flaky-test-detector
+flaky-detector "npm test"
 ```
 
 ## Use
 
 ```bash
 # point it at however you run tests
-node index.js "npm test"
-node index.js "pytest tests/"
-node index.js "go test ./..."
-node index.js "jest --watch=false"
+flaky-detector "npm test"
+flaky-detector "pytest tests/"
+flaky-detector "go test ./..."
+flaky-detector "jest --watch=false"
 
 # also update the quarantine manifest for medium/high-severity flakes
-node index.js --quarantine "npm test"
+flaky-detector --quarantine "npm test"
 
 # CI mode: only HIGH-severity flakes fail the build
-node index.js --ci "npm test"
+flaky-detector --ci "npm test"
 
 # Slack/webhook alert when flakes appear (names + counts only, never traces)
-SLACK_WEBHOOK_URL=https://hooks.slack.com/... node index.js "npm test"
+SLACK_WEBHOOK_URL=https://hooks.slack.com/... flaky-detector "npm test"
 # preview EXACTLY what would be sent, without sending it:
-node index.js --dry-run-notify "npm test"
+flaky-detector --dry-run-notify "npm test"
 
 # visual dashboard from your local history
 npm run report
