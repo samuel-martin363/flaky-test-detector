@@ -1,0 +1,51 @@
+# Flaky Test Detection — GitHub Actions recipe
+#
+# Copy this to .github/workflows/flaky-tests.yml in your repo.
+# Runs nightly (so it doesn't slow down every PR) and on-demand.
+#
+# Privacy note: everything runs on YOUR runner. The only outbound call is the
+# optional Slack alert, which sends test names + counts ONLY (no stack traces).
+# Omit the SLACK_WEBHOOK_URL secret to keep it 100% local.
+
+name: Flaky Test Detection
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # every day at 06:00 UTC
+  workflow_dispatch: {} # lets you run it manually from the Actions tab
+
+jobs:
+  detect-flaky:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install your project deps
+        run: npm ci
+
+      # --- get the detector available -------------------------------------
+      # Until it's published to npm, vendor it (git submodule / copy) and call
+      # node directly. Once published: `npx flaky-test-detector ...`
+      - name: Run flaky detection
+        env:
+          # optional — delete to disable alerts and stay fully local
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          node ./flaky-test-detector/index.js \
+            --junit=results.xml \
+            --ci \
+            --quarantine \
+            "npm test -- --reporters=default --reporters=jest-junit"
+        # --ci  -> only HIGH-severity flakes fail the job
+        # --junit=results.xml -> exact per-test results (have your runner emit it)
+
+      - name: Upload flaky history + dashboard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flaky-report
+          path: .flaky-detector-data/

@@ -1,0 +1,37 @@
+// Flaky Test Detection — Jenkins recipe (declarative pipeline)
+//
+// Drop this stage into your Jenkinsfile. Triggers nightly via cron.
+// Privacy: runs on your agent. Optional Slack alert sends names + counts only;
+// store the webhook as a Jenkins credential and omit it to stay fully local.
+
+pipeline {
+  agent any
+
+  triggers {
+    cron('H 6 * * *') // ~06:00 daily; H spreads load across agents
+  }
+
+  stages {
+    stage('Flaky Test Detection') {
+      steps {
+        // Bind the webhook secret only if you want alerts:
+        withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK_URL')]) {
+          sh '''
+            npm ci
+            node ./flaky-test-detector/index.js \
+              --junit=results.xml \
+              --ci \
+              --quarantine \
+              "npm test -- --reporters=default --reporters=jest-junit"
+          '''
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: '.flaky-detector-data/**', allowEmptyArchive: true
+    }
+  }
+}

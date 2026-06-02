@@ -1,0 +1,29 @@
+# Flaky Test Detection — GitLab CI recipe
+#
+# Add this job to your .gitlab-ci.yml (or include this file).
+# Runs on a schedule you set under CI/CD > Schedules.
+#
+# Privacy: runs entirely on your runner. Optional Slack alert sends names +
+# counts only. Remove SLACK_WEBHOOK_URL (a masked CI variable) to stay local.
+
+flaky-test-detection:
+  stage: test
+  image: node:20
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web" # manual "Run pipeline" button
+  script:
+    - npm ci
+    # have your test runner emit JUnit XML (results.xml), then detect:
+    - >
+      node ./flaky-test-detector/index.js
+      --junit=results.xml
+      --ci
+      --quarantine
+      "npm test -- --reporters=default --reporters=jest-junit"
+  artifacts:
+    when: always
+    paths:
+      - .flaky-detector-data/
+    expire_in: 30 days
+  # SLACK_WEBHOOK_URL is read from CI/CD > Variables (mark it Masked).

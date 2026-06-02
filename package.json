@@ -1,0 +1,50 @@
+{
+  "name": "flaky-test-detector",
+  "version": "0.1.0",
+  "description": "Local-first flaky-test detector. Finds, explains, and tracks flaky tests without your data ever leaving the machine.",
+  "main": "index.js",
+  "bin": {
+    "flaky-detector": "index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "demo": "node index.js --junit=results.xml \"node test-junit.js\"",
+    "report": "node report.js"
+  },
+  "keywords": [
+    "testing",
+    "flaky-tests",
+    "flaky",
+    "ci-cd",
+    "test-reliability",
+    "junit",
+    "local-first",
+    "privacy"
+  ],
+  "author": "Samuel Martin <harleengarcha15@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuel-martin363/flaky-test-detector.git"
+  },
+  "homepage": "https://github.com/samuel-martin363/flaky-test-detector#readme",
+  "bugs": {
+    "url": "https://github.com/samuel-martin363/flaky-test-detector/issues"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "files": [
+    "index.js",
+    "detector.js",
+    "stats.js",
+    "fingerprint.js",
+    "junit.js",
+    "git.js",
+    "notify.js",
+    "report.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {}
+}
