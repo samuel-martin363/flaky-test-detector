@@ -13,6 +13,12 @@ for (const a of args) {
     flags[k] = v === undefined ? true : v;
   } else positional.push(a);
 }
+// `flaky-detector report` — build the offline HTML dashboard from local history.
+if (positional[0] === "report") {
+  require("./report"); // self-executing: reads .flaky-detector-data, writes report.html
+  return;
+}
+
 const testCommand = positional.join(" ") || "npm test";
 const quarantine = !!flags.quarantine;
 const ciMode = !!flags.ci; // exit non-zero only on high-severity flakes

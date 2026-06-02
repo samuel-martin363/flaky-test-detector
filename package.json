@@ -1,6 +1,6 @@
 {
   "name": "flaky-test-detector",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local-first flaky-test detector. Finds, explains, and tracks flaky tests without your data ever leaving the machine.",
   "main": "index.js",
   "bin": {

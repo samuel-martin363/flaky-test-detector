@@ -1,3 +1,5 @@
+<div align="center">
+
 # Flaky Test Detector 🔍
 
 **Local-first flaky-test analysis. Your test data never leaves your machine.**
@@ -5,6 +7,31 @@
 Finds the tests that pass sometimes and fail others, tells you *how confident* it
 is, *why* they're failing, and *when* they started — without uploading a single
 stack trace to anyone's cloud.
+
+[![npm version](https://img.shields.io/npm/v/flaky-test-detector?color=cb3837&logo=npm)](https://www.npmjs.com/package/flaky-test-detector)
+[![node](https://img.shields.io/node/v/flaky-test-detector?logo=node.js&color=339933)](https://www.npmjs.com/package/flaky-test-detector)
+[![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
+[![license](https://img.shields.io/npm/l/flaky-test-detector?color=blue)](LICENSE)
+
+</div>
+
+```console
+$ npx flaky-test-detector --junit=results.xml "npm test"
+
+📊 Summary
+   Runs executed : 8
+   Tests seen    : 5
+   Flaky tests   : 2  (40% of suite)
+   Suite health  : PROBLEM
+
+● HIGH  api::syncs_with_payment_provider
+   verdict     : flaky (high confidence)
+   failed      : 3/8 runs (observed 38%, true rate likely 14–69%)
+   confidence  : 99% this is genuinely flaky
+   root cause  : Network / external dependency
+   → Mock the external call or add bounded retries. A test that hits a real
+     network is flaky by construction.
+```
 
 ---
 
@@ -17,7 +44,7 @@ your own machine/CI — **no network calls, no telemetry, no upload.**
 
 It also does the analysis a "rerun it 5 times" script can't:
 
-| | This tool | A weekend script |
+| | This tool | A basic rerun loop |
 |---|---|---|
 | Detect flaky tests | ✅ | ✅ |
 | Statistical confidence (Wilson + Bayesian) | ✅ | ❌ |
@@ -64,11 +91,11 @@ SLACK_WEBHOOK_URL=https://hooks.slack.com/... flaky-detector "npm test"
 flaky-detector --dry-run-notify "npm test"
 
 # visual dashboard from your local history
-npm run report
+flaky-detector report
 
 # EXACT per-test results — point it at your framework's JUnit XML report
 # (pytest --junitxml=results.xml, jest-junit, go-junit-report, etc.)
-node index.js --junit=results.xml "pytest --junitxml=results.xml"
+flaky-detector --junit=results.xml "pytest --junitxml=results.xml"
 ```
 
 ### Two reading modes
